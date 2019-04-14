@@ -1,0 +1,75 @@
+version: "3.0"
+
+services:
+
+  server:
+    environment:
+      - VIRTUAL_HOST=${FI_PUBLIC_HOST}
+      - VIRTUAL_PORT=${FI_SERVER_PORT}
+      - APP_NAME=${FI_PROJECT_NAME}
+      - APP_PORT=${FI_SERVER_PORT}
+      - PROJECT_NAME=${FI_PROJECT_NAME}
+      - PROJECT_VERSION=${FI_PROJECT_VERSION}
+      - PROJECT_ENV=${FI_PROJECT_ENV}
+      - URL_PUBLIC=${FI_URL_PUBLIC}
+      - SERVER_HOSTNAME=${FI_SERVER_HOSTNAME}
+      - SERVER_PORT=${FI_SERVER_PORT}
+      - SERVER_DEBUG=${FI_SERVER_DEBUG}
+      - SERVER_TTL=${FI_SERVER_TTL}
+      - REDIS_CACHE_HOSTNAME=${FI_REDIS_CACHE_HOSTNAME}
+      - REDIS_CACHE_PORT=${FI_REDIS_CACHE_PORT}
+      - DB_HOST=${FI_DB_HOST}
+      - DB_PORT=${FI_DB_PORT}
+      - DB_DB=${FI_DB_DB}
+      - DB_USER=${FI_DB_USER}
+      - DB_PWD=${FI_DB_PWD}
+      - GOOGLE_CAPTCHA_URL=${FI_GOOGLE_CAPTCHA_URL}
+      - GOOGLE_CAPTCHA_SECRET=${FI_GOOGLE_CAPTCHA_SECRET}
+      - GOOGLE_CAPTCHA_KEY=${FI_GOOGLE_CAPTCHA_KEY}
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    links:
+      - redis-cache
+    depends_on:
+      - db
+    expose:
+      - "${FI_SERVER_PORT}"
+    volumes:
+      - ./server:/usr/src/app
+      - ./sxadapter:/usr/src/app/packages/sxadapter
+      - ./sxmodel:/usr/src/app/packages/sxmodel
+
+
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=${FI_DB_DB}
+      - POSTGRES_USER=${FI_DB_USER}
+      - POSTGRES_PASSWORD=${FI_DB_PWD}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - ./var/lib/postgresql:/var/lib/postgresql/data/pgdata
+
+
+  pgadmin:
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${FI_PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${FI_PGADMIN_PASSWORD}
+    image: dpage/pgadmin4:latest
+    depends_on:
+      - db
+    ports:
+      - "${FI_PGADMIN_PORT}:80"
+    volumes:
+      - ./var/lib/pgadmin:/var/lib/pgadmin
+
+
+  redis-cache:
+    image: redis
+
+
+networks:
+  default:
+    external:
+      name: nginx-proxy
