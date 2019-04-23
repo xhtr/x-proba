@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from uuid import uuid4
-
+from flask_login import UserMixin
 from app import db
 
 
-class User(db.Model):
+class User(db.Model, UserMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(255), unique=True, nullable=False, index=True)

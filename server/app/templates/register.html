@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<h4>{{ title }}</h4>
+<li>{{ message }}</li>
+{% from "macro.html" import render_field %}
+    <form method="post">
+    {{ form.hidden_tag() }}
+    {{ render_field(form.username) }}
+    {{ render_field(form.password) }}
+    {{ form.submit() }}
+    </form>
+
+{% endblock %}

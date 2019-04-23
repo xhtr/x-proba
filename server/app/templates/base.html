@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+   <div
+    <a href =" {{ url_for('main.landing') }}" >   home <a>
+    <a href =" {{ url_for('main.ping') }} ">   ping  <a>
+    <a href =" {{ url_for('main.frequencies') }} ">   Frequencies <a>
+    <a href=" {{ url_for('auth.register') }}">   Register</a>
+    <a href=" {{ url_for('auth.login') }}">   Login</a>
+   </div>
+    {% block content %} 
+    {% endblock %}
+
+</body>
+</html>
